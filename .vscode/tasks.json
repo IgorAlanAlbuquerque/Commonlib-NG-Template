@@ -4,16 +4,15 @@
     {
       "label": "Bootstrap: submodules",
       "type": "shell",
-      "command": "git submodule update --init --recursive",
+      "command": "git submodule add -b ng https://github.com/alandtse/CommonLibVR.git extern/CommonLibVR-ng",
       "problemMatcher": [],
       "runOptions": { "runOn": "folderOpen" }
     },
     {
-      "label": "Bootstrap: cmake configure",
+      "label": "Bootstrap: fetch submodules",
       "type": "shell",
-      "command": "cmake --preset release",
+      "command": "git submodule update --init --recursive",
       "problemMatcher": [],
-      "dependsOn": ["Bootstrap: submodules"],
       "runOptions": { "runOn": "folderOpen" }
     }
   ]

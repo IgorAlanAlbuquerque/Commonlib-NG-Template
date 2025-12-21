@@ -1,4 +1,4 @@
 {
   "cmake.useCMakePresets": "always",
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": true
 }
