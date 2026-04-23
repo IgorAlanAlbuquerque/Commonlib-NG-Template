@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
-cmake_policy(SET CMP0002 NEW)
 
-project(ModNameHere VERSION 0.0.1 LANGUAGES CXX)
+project(Template VERSION 0.0.1 LANGUAGES CXX)
 
 if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
     set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME}")
@@ -16,36 +15,49 @@ add_subdirectory(
 )
 
 get_target_property(COMMONLIB_SRC_DIR CommonLibSSE SOURCE_DIR)
-
 include(${COMMONLIB_SRC_DIR}/cmake/CommonLibSSE.cmake)
 
-add_commonlibsse_plugin(${PROJECT_NAME}
-  SOURCES
-    src/plugin.cpp
-)
+include(cmake/CollectFiles.cmake)
+include(cmake/headerlist.cmake)
+include(cmake/sourcelist.cmake)
+
+add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${headers} ${sources})
 
 target_include_directories(${PROJECT_NAME}
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/src )
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/Detours
+)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE 
-  src/PCH.h
-)
+find_package(imgui CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui xinput.lib)
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE include/PCH.h)
+
+include(cmake/detours.cmake)
 
 if(DEFINED OUTPUT_FOLDER)
     set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")
-
     message(STATUS "SKSE plugin output folder: ${DLL_FOLDER}")
-
     add_custom_command(
-        TARGET "${PROJECT_NAME}"
-        POST_BUILD
+        TARGET "${PROJECT_NAME}" POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${DLL_FOLDER}"
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+            "$<TARGET_FILE:${PROJECT_NAME}>"
+            "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
         VERBATIM
     )
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_custom_command(
+            TARGET "${PROJECT_NAME}" POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "$<TARGET_PDB_FILE:${PROJECT_NAME}>"
+                "${DLL_FOLDER}/$<TARGET_PDB_FILE_NAME:${PROJECT_NAME}>"
+            VERBATIM
+        )
+    endif()
 endif()

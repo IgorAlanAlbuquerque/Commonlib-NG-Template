@@ -1,0 +1,1 @@
+collect_project_files(headers "${CMAKE_CURRENT_SOURCE_DIR}/include" "*.h")

@@ -13,7 +13,7 @@ namespace
     {
         if (auto path = log::log_directory())
         {
-            *path /= "ERFDestruction.log";
+            *path /= "Template.log";
             auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
             auto logger = std::make_shared<spdlog::logger>("global", sink);
             spdlog::set_default_logger(logger);
