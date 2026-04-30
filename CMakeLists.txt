@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(Template VERSION 0.0.1 LANGUAGES CXX)
+project(Template VERSION 1.0 LANGUAGES CXX)
 
 if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
     set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/${PROJECT_NAME}")
@@ -32,9 +32,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
-
-find_package(imgui CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui xinput.lib)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE include/PCH.h)
 

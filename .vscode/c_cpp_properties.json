@@ -4,8 +4,10 @@
       "name": "x64",
       "includePath": [
         "${workspaceFolder}/src",
+        "${workspaceFolder}/include",
         "${workspaceFolder}/build/release/vcpkg_installed/x64-windows-static-md/include",
-        "${workspaceFolder}/extern/CommonLibVR-ng/include"
+        "${workspaceFolder}/extern/CommonLibVR-ng/include",
+        "${workspaceFolder}/extern/Detours"
       ],
       "defines": ["UNICODE", "_DEBUG"],
       "windowsSdkVersion": "10.0.19041.0",
